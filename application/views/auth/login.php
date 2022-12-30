@@ -65,7 +65,7 @@
       </form>
       <!-- /.social-auth-links -->
 
-      <a href="#">I forgot my password</a>
+      <a href="<?= site_url('info_app') ?>" target="_blank">Info Application</a>
 
     </div>
     <!-- /.login-box-body -->

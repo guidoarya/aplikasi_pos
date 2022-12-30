@@ -28,7 +28,7 @@
           </tr>
         </thead>
         <tbody>
-          <?php $no = 1;
+          <!-- <?php $no = 1;
           foreach ($item as $items) { ?>
             <tr>
               <td><?= $no++ ?></td>
@@ -43,7 +43,7 @@
                 <a href="<?= site_url('items/delete/' . $items->id_item) ?>" id="btn-delete" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Delete</a>
               </td>
             </tr>
-          <?php } ?>
+          <?php } ?> -->
         </tbody>
       </table>
     </div>
@@ -51,3 +51,30 @@
 
 </section>
 <!-- /.content -->
+
+<script>
+    $(document).ready(function() {
+        $('#example1').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "<?= site_url('items/get_ajax') ?>",
+                "type": "POST"
+            },
+            "columnDefs": [
+                {
+                    "targets": [5, 6],
+                    "className": 'text-right'
+                },
+                {
+                    "targets": [-1],
+                    "className": 'text-center'
+                },
+                {
+                    "targets": [3, -1],
+                    "orderable": false
+                }
+            ]
+        })
+    })
+</script>

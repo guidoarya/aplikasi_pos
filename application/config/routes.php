@@ -52,3 +52,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'dashboard';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+
+
+$route['stock-in'] = 'stock/in_stock';
+$route['stock-out'] = 'stock/out_stock';
+$route['stock-in/add'] = 'stock/add_stock_in';
+$route['stock-out/add'] = 'stock/add_stock_out';
+
+
+
+// $route['401'] = ''; // Tidak sesuai Role authentication
+// $route['403'] = '';  // forbidden , harus login dulu untuk akses
+// $route['404'] = ''; // link tidak tersedia

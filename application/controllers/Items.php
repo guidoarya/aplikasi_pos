@@ -11,6 +11,41 @@ class Items extends CI_Controller
 		check_not_login();
 	}
 
+	function get_ajax()
+	{
+		$list = $this->m_data->get_datatables('p_item', 'p_category', 'p_category.id_category=p_item.id_category', 'p_unit', 'p_unit.id_unit=p_item.id_unit');
+		$data = array();
+		$no = @$_POST['start'];
+		foreach ($list as $item) {
+			$no++;
+			$row = array();
+			$row[] = $no . ".";
+			$row[] = $item->barcode_item . '<br><a href="' . site_url('items/barcode_generate/' . $item->id_item) . '" class="btn btn-default btn-xs">Generate <i class="fa fa-barcode"></i></a>';
+			$row[] = $item->name_item;
+			$row[] = $item->name_category;
+			$row[] = $item->name_unit;
+			$row[] = 'Rp. ' . number_format(($item->price),0,',','.') . ',-';
+			$row[] = $item->stock;
+			// $row[] = $item->image != null ? '<img src="' . base_url('uploads/product/' . $item->image) . '" class="img" style="width:100px">' : null;
+			// add html for action
+			$row[] = '<a href="' . site_url('items/edit/' . $item->id_item) . '" class="btn btn-warning btn-sm"><i class="fa fa-pencil"></i> Update</a>
+                    <a href="' . site_url('items/delete/' . $item->id_item) . '" id="btn-delete" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Delete</a>';
+			$data[] = $row;
+		}
+		$output = array(
+			"draw" => @$_POST['draw'],
+			"recordsTotal" => $this->m_data->count_all('p_item'),
+			"recordsFiltered" => $this->m_data->count_filtered('p_item', 'p_category', 'p_category.id_category=p_item.id_category', 'p_unit', 'p_unit.id_unit=p_item.id_unit'),
+			"data" => $data,
+		);
+		// output to json format
+		echo json_encode($output);
+	}
+
+
+
+	// my controller custom !
+
 	public function template($view, $data)
 	{
 		$this->load->view('frontend/head');
@@ -181,7 +216,7 @@ class Items extends CI_Controller
 		$this->load->library('pdfgenerator');
 		$item = $this->m_data->get_condition('p_item', ['barcode_item' => $barcode_item]);
 		$generator = new Picqer\Barcode\BarcodeGeneratorHTML();
-		$gambar_barcode = $generator->getBarcode($item['barcode_item'], $generator::TYPE_CODE_128);		
+		$gambar_barcode = $generator->getBarcode($item['barcode_item'], $generator::TYPE_CODE_128);
 
 		$query = $this->m_data->get_condition('user', ['id_user' => $this->session->userdata('id_user')]);
 		$data = [
@@ -197,13 +232,13 @@ class Items extends CI_Controller
 		$paper = 'A7';
 
 		$orientation = "landscape";
-		$html = $this->load->view('content/manage_item/cetak', $data, true);
+		$html = $this->load->view('content/manage_item/cetak_barcode', $data, true);
 
 		$this->pdfgenerator->generate($html, $file_pdf, $paper, $orientation);
 	}
 
 	public function qr($kodenya)
-	{		
+	{
 		qrcode::png(
 			$kodenya,
 			$outfile = false,
